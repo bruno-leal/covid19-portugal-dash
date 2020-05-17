@@ -3,7 +3,7 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 
-from app import app
+from app import app, server
 from views import national, regional, local
 import data_handler as dh
 
