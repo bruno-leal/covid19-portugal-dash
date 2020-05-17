@@ -2,7 +2,7 @@ import pandas as pd
 import datetime
 import plotly.express as px
 import plotly.graph_objects as go
-import json
+# import json
 
 import utils
 
@@ -321,29 +321,29 @@ class PlotlyCharts:
 		return fig
 
 
-	def confirmed_municipalities_map(local_data, last_n_days):
-		local_data_most_recent_date = local_data.date.max().date()
-		latest_local_data = local_data.query('date == @local_data_most_recent_date')
+	# def confirmed_municipalities_map(local_data, last_n_days):
+	# 	local_data_most_recent_date = local_data.date.max().date()
+	# 	latest_local_data = local_data.query('date == @local_data_most_recent_date')
 
-		with open(utils.GEOJSON_FILE_PATH, encoding='utf-8') as json_file:
-			geojson_layer = json.load(json_file)
+	# 	with open(utils.GEOJSON_FILE_PATH, encoding='utf-8') as json_file:
+	# 		geojson_layer = json.load(json_file)
 
-		# import plotly.express as px
+	# 	# import plotly.express as px
 
-		fig = px.choropleth(
-			latest_local_data,
-			geojson=geojson_layer,
-			color="confirmed",
-			locations="municipality",
-			featureidkey="properties.NAME_2",
-			# scope="europe",
-			width=1024,
-			height=768,
-			# projection="stereographic"
-		)
-		fig.update_geos(fitbounds="locations")
-		# fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+	# 	fig = px.choropleth(
+	# 		latest_local_data,
+	# 		geojson=geojson_layer,
+	# 		color="confirmed",
+	# 		locations="municipality",
+	# 		featureidkey="properties.NAME_2",
+	# 		# scope="europe",
+	# 		width=1024,
+	# 		height=768,
+	# 		# projection="stereographic"
+	# 	)
+	# 	fig.update_geos(fitbounds="locations")
+	# 	# fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
-		# fig.show()
+	# 	# fig.show()
 
-		return fig
+	# 	return fig
