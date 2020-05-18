@@ -47,7 +47,7 @@ app.layout = dbc.Container([
 						html.P(
 							[
 								"Autor: ",
-								html.A(children=["Bruno Leal"], href="https://github.com/bruno-leal/covid-19-data", target="_blank"),
+								html.A(children=["Bruno Leal"], href="https://github.com/bruno-leal/covid19-portugal-dash", target="_blank"),
 							]
 						),
 						width={"size": 3, "order": "last", "offset": 3},
