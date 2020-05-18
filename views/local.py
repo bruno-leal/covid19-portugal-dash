@@ -48,7 +48,8 @@ def get_contents():
 		dbc.Card(
 			dbc.CardBody(
 				[
-					html.H4("Concelho"),
+					html.H4("Dados por concelho"),
+					html.P("Para consultar informação específica de um concelho, utilize o campo abaixo."),
 					dbc.Select(
 						id="select-municipality",
 						options=[
