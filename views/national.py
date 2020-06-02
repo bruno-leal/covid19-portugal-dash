@@ -24,10 +24,10 @@ def generate_chart_new_dead():
 		)
 	])
 
-def generate_chart_bar_tested(last_n_days):
+def generate_chart_bar_tested():
 	return html.Div(children=[
 		dcc.Graph(
-			figure=ch.PlotlyCharts.new_tested_evolution(national_data, last_n_days)
+			figure=ch.PlotlyCharts.new_tested_evolution(national_data)
 		)
 	])
 
@@ -45,16 +45,16 @@ def generate_chart_line_recovery():
 		)
 	])
 
-def generate_chart_line_outcome(last_n_days):
+def generate_chart_line_outcome():
 	return html.Div(children=[
 		dcc.Graph(
-			figure=ch.PlotlyCharts.outcome_evolution(national_data, last_n_days)
+			figure=ch.PlotlyCharts.outcome_evolution(national_data)
 		)
 	])
 
 
 # Return page content
-def get_contents(last_n_days):
+def get_contents():
     return html.Div([
 		dbc.Card(
 			dbc.CardBody(
@@ -78,7 +78,7 @@ def get_contents(last_n_days):
 			dbc.CardBody(
 				[
 					html.H4("Novos Testados"),
-					generate_chart_bar_tested(last_n_days)
+					generate_chart_bar_tested()
 				]
 			),
 			className="my-2"
@@ -96,7 +96,7 @@ def get_contents(last_n_days):
 			dbc.CardBody(
 				[
 					html.H4("Recuperados, Óbitos e Internados"),
-					generate_chart_line_outcome(last_n_days)
+					generate_chart_line_outcome()
 				]
 			),
 			className="my-2"

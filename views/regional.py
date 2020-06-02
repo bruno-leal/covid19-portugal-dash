@@ -11,36 +11,36 @@ national_data = dh.get_national_data()
 regional_data = dh.get_regional_data()
 
 
-def generate_chart_stack_confirmed_region(last_n_days):
+def generate_chart_stack_confirmed_region():
 	return html.Div(children=[
 		dcc.Graph(
-			figure=ch.PlotlyCharts.confirmed_regional_proportion_evolution(national_data, regional_data, last_n_days)
+			figure=ch.PlotlyCharts.confirmed_regional_proportion_evolution(national_data, regional_data)
 		)
 	])
 
-def generate_chart_stack_dead_region(last_n_days):
+def generate_chart_stack_dead_region():
 	return html.Div(children=[
 		dcc.Graph(
-			figure=ch.PlotlyCharts.deaths_regional_proportion_evolution(national_data, regional_data, last_n_days)
+			figure=ch.PlotlyCharts.deaths_regional_proportion_evolution(national_data, regional_data)
 		)
 	])
 
-def generate_chart_confirmed_dead_por_region(last_n_days):
+def generate_chart_confirmed_dead_por_region():
 	return html.Div(children=[
 		dcc.Graph(
-			figure=ch.PlotlyCharts.confirmed_deaths_comparison_evolution(regional_data, last_n_days)
+			figure=ch.PlotlyCharts.confirmed_deaths_comparison_evolution(regional_data)
 		)
 	])
 
 
 # Return page content
-def get_contents(last_n_days):
+def get_contents():
     return html.Div([
 		dbc.Card(
 			dbc.CardBody(
 				[
 					html.H4("Evolução dos Casos Confirmados por região"),
-					generate_chart_stack_confirmed_region(last_n_days)
+					generate_chart_stack_confirmed_region()
 				]
 			),
 			className="my-2"
@@ -49,7 +49,7 @@ def get_contents(last_n_days):
 			dbc.CardBody(
 				[
 					html.H4("Evolução dos Óbitos por região"),
-					generate_chart_stack_dead_region(last_n_days)
+					generate_chart_stack_dead_region()
 				]
 			),
 			className="my-2"
@@ -58,7 +58,7 @@ def get_contents(last_n_days):
 			dbc.CardBody(
 				[
 					html.H4("Evolução de Casos Confirmados vs. Óbitos, por região"),
-					generate_chart_confirmed_dead_por_region(last_n_days)
+					generate_chart_confirmed_dead_por_region()
 				]
 			),
 			className="my-2"

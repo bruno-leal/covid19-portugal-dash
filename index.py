@@ -62,9 +62,9 @@ app.layout = dbc.Container([
 @app.callback(Output('page-content', 'children'), [Input('url', 'pathname')])
 def display_page(pathname):
 	if (pathname == '/national'):
-		return national.get_contents(last_n_days=60)
+		return national.get_contents()
 	elif (pathname == '/regional'):
-		return regional.get_contents(last_n_days=60)
+		return regional.get_contents()
 	elif (pathname == '/local'):
 		return local.get_contents()
 	else:

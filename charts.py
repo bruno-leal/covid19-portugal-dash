@@ -73,9 +73,8 @@ class PlotlyCharts:
 		return fig
 
 
-	def new_tested_evolution(national_data, last_n_days):
-		reference_date = national_data.date.max() - datetime.timedelta(days=last_n_days)
-		df = national_data.query("date > @reference_date").filter(['date', 'new_confirmed', 'new_unconfirmed'])
+	def new_tested_evolution(national_data):
+		df = national_data.filter(['date', 'new_confirmed', 'new_unconfirmed'])
 		df = df.assign(date_fmt=df.date.dt.strftime("%B %d"))
 
 		fig = go.Figure()
@@ -84,7 +83,7 @@ class PlotlyCharts:
 
 		fig.update_layout(
 			barmode='stack',
-			title="Novos Testados (nos últimos {n} dias)".format(n=last_n_days),
+			title="Novos Testados",
 			xaxis_title="Data",
 			yaxis_title="Casos",
 			template="plotly_white"
@@ -116,20 +115,19 @@ class PlotlyCharts:
 		return fig
 
 
-	def outcome_evolution(national_data, last_n_days):
-		reference_date = national_data.date.max() - datetime.timedelta(days=last_n_days)
-		df = national_data.query("date > @reference_date").filter(['date', 'recovered', 'dead', 'hospitalized_infirmary', 'hospitalized_icu', 'domiciliary_recovery'])
+	def outcome_evolution(national_data):
+		df = national_data.filter(['date', 'recovered', 'dead', 'hospitalized_infirmary', 'hospitalized_icu', 'domiciliary_recovery'])
 		df = df.assign(date_fmt=df.date.dt.strftime("%B %d"))
 
 		fig = go.Figure()
-		fig.add_trace(go.Scatter(x = df.date, y = df.recovered, mode = 'lines', name = 'Recuperados', line=dict(color="#006600", width=4)))
-		fig.add_trace(go.Scatter(x = df.date, y = df.dead, mode = 'lines', name = 'Óbitos', line=dict(color="#ff0000", width=4)))
+		fig.add_trace(go.Scatter(x = df.date, y = df.recovered, mode = 'lines', name = 'Recuperados', line=dict(color="#006600", width=4), visible = 'legendonly'))
+		fig.add_trace(go.Scatter(x = df.date, y = df.dead, mode = 'lines', name = 'Óbitos', line=dict(color="#ff0000", width=4), visible = 'legendonly'))
 		fig.add_trace(go.Scatter(x = df.date, y = df.hospitalized_infirmary, mode = 'lines', name = 'Internados em enfermaria', line=dict(color="#ff9966", width=2, dash='dot')))
 		fig.add_trace(go.Scatter(x = df.date, y = df.hospitalized_icu, mode = 'lines', name = 'Internados em UCI', line=dict(color="#ff3333", width=2, dash='dot')))
 		fig.add_trace(go.Scatter(x = df.date, y = df.domiciliary_recovery, mode = 'lines', name = 'Recuperação domiciliária', line=dict(color="#3399ff", width=2, dash='dot'), visible = 'legendonly'))
 
 		fig.update_layout(
-			title="Recuperados, Óbitos e Internados (nos últimos {n} dias)".format(n=last_n_days),
+			title="Recuperados, Óbitos e Internados",
 			xaxis_title="Data",
 			yaxis_title="Casos",
 			template="plotly_white"
@@ -141,7 +139,8 @@ class PlotlyCharts:
 	def recovery_evolution(national_data):
 		fig = go.Figure()
 
-		df = national_data.query('date >= "2020-03-14"') # first day with records of cases in icu
+		reference_date = national_data.query("hospitalized_icu > 0").date.min() # first day with records of cases in icu
+		df = national_data.query('date >= @reference_date')
 
 		fig.add_trace(go.Scatter(
 			x=df.date,
@@ -185,11 +184,9 @@ class PlotlyCharts:
 		return fig
 
 
-	def confirmed_evolution(national_data, regional_data, last_n_days):
-		reference_date = regional_data.date.max() - datetime.timedelta(days=last_n_days)
-
-		df_regional = regional_data.query("date > @reference_date").filter(['date', 'region', 'confirmed'])
-		df_national = national_data.query("date > @reference_date").filter(['date', 'region', 'confirmed'])
+	def confirmed_evolution(national_data, regional_data):
+		df_regional = regional_data.filter(['date', 'region', 'confirmed'])
+		df_national = national_data.filter(['date', 'region', 'confirmed'])
 		df = pd.concat([df_national, df_regional])
 
 		return px.line(
@@ -201,14 +198,13 @@ class PlotlyCharts:
 			labels=dict(
 				confirmed="Casos Confirmados", region="Região", date = "Data"
 			),
-			title="Evolução dos Casos Confirmados, por região (nos últimos {n} dias)".format(n=last_n_days),
+			title="Evolução dos Casos Confirmados, por região",
 			template="plotly_white"
 		)
 
 
-	def confirmed_regional_proportion_evolution(national_data, regional_data, last_n_days):
-		reference_date = regional_data.date.max() - datetime.timedelta(days=last_n_days)
-		df = regional_data.query("date > @reference_date").filter(['date', 'region', 'confirmed', 'confirmed_per'])
+	def confirmed_regional_proportion_evolution(national_data, regional_data):
+		df = regional_data.filter(['date', 'region', 'confirmed', 'confirmed_per'])
 		df = df.assign(date_fmt=df.date.dt.strftime("%B %d"))
 
 		return px.bar(
@@ -220,15 +216,14 @@ class PlotlyCharts:
 			labels=dict(
 				confirmed="Casos Confirmados", region="Região", date = "Data"
 			),
-			title="Evolução dos Casos Confirmados, por região (nos últimos {n} dias)".format(n=last_n_days),
+			title="Evolução dos Casos Confirmados, por região",
 			template="plotly_white"
 		)
 
 
-	def deaths_evolution(national_data, regional_data, last_n_days):
-		reference_date = regional_data.date.max() - datetime.timedelta(days=last_n_days)
-		df = regional_data.query("date > @reference_date").filter(['date', 'region', 'dead'])
-		df = df.append(national_data.query("date > @reference_date").filter(['date', 'region', 'dead']))
+	def deaths_evolution(national_data, regional_data):
+		df = regional_data.filter(['date', 'region', 'dead'])
+		df = df.append(national_data.filter(['date', 'region', 'dead']))
 		df = df.assign(date_fmt=df.date.dt.strftime("%B %d"))
 
 		return px.line(
@@ -240,14 +235,13 @@ class PlotlyCharts:
 			labels=dict(
 				dead="Óbitos", region="Região", date = "Data"
 			),
-			title="Evolução dos Óbitos, por região (nos últimos {n} dias)".format(n=last_n_days),
+			title="Evolução dos Óbitos, por região",
 			template="plotly_white"
 		)
 
 
-	def deaths_regional_proportion_evolution(national_data, regional_data, last_n_days):
-		reference_date = regional_data.date.max() - datetime.timedelta(days=last_n_days)
-		df = regional_data.query("date > @reference_date").filter(['date', 'region', 'dead', 'dead_per'])
+	def deaths_regional_proportion_evolution(national_data, regional_data):
+		df = regional_data.filter(['date', 'region', 'dead', 'dead_per'])
 		df = df.assign(date_fmt=df.date.dt.strftime("%B %d"))
 
 		return px.bar(
@@ -259,13 +253,13 @@ class PlotlyCharts:
 			labels=dict(
 				dead="Óbitos", region="Região", date = "Data"
 			),
-			title="Evolução dos Óbitos, por região (nos últimos {n} dias)".format(n=last_n_days),
+			title="Evolução dos Óbitos, por região",
 			template="plotly_white"
 		)
 
 
-	def confirmed_deaths_comparison_evolution(regional_data, last_n_days):
-		reference_date = regional_data.date.max() - datetime.timedelta(days = last_n_days)
+	def confirmed_deaths_comparison_evolution(regional_data):
+		reference_date = regional_data.query("dead > 0").date.min() # first day with records of deaths
 		df = regional_data.query("date > @reference_date").filter(['date', 'region', 'confirmed', 'dead', 'lethality_rate'])
 		df.lethality_rate = round(df.lethality_rate * 100, 2)
 		df = df.assign(date_fmt = df.date.dt.strftime("%B %d"))
@@ -284,7 +278,7 @@ class PlotlyCharts:
 			labels = dict(
 				confirmed = "Casos Confirmados", dead = "Óbitos", region = "Região", date_fmt = "Data", lethality_rate = "Taxa de Letalidade (%)"
 			),
-			title="Evolução de Casos Confirmados, Óbitos e Taxa de Letalidade, por região (nos últimos {n} dias)".format(n=last_n_days),
+			title="Evolução de Casos Confirmados, Óbitos e Taxa de Letalidade, por região",
 			template="plotly_white"
 		)
 
