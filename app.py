@@ -1,6 +1,7 @@
 import dash
 import dash_bootstrap_components as dbc
 
-external_stylesheets = [dbc.themes.FLATLY]
+FONT_AWESOME = "https://use.fontawesome.com/releases/v5.10.2/css/all.css"
+external_stylesheets = [dbc.themes.FLATLY, FONT_AWESOME]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
 server = app.server

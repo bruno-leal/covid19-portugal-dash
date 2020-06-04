@@ -3,6 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
+import dash_table
 import json
 
 from app import app
@@ -21,7 +22,7 @@ def generate_chart_bar_new_confirmed_municipality(municipality):
 
 def generate_table_confirmed():
 	max_date = local_data.date.max().date()
-	df = local_data.query('date == @max_date').filter(['municipality', 'confirmed', 'new_confirmed', 'new_confirmed_per', 'new_confirmed_avg_7', 'new_confirmed_per_avg_7']).sort_values(['confirmed'], ascending=False).head(10)
+	df = local_data.query('date == @max_date').query('confirmed > 0').filter(['municipality', 'confirmed', 'new_confirmed', 'new_confirmed_per', 'new_confirmed_avg_7', 'new_confirmed_per_avg_7']).sort_values(['confirmed'], ascending=False)#.head(10)
 	df = df.rename(
 		columns={
 			'municipality': 'Concelho',
@@ -37,6 +38,56 @@ def generate_table_confirmed():
 
 	return html.Div([
 		table
+	])
+
+def generate_new_table_confirmed():
+	max_date = local_data.date.max().date()
+	df = local_data.query('date == @max_date').query('confirmed > 0').filter(['municipality', 'confirmed', 'new_confirmed', 'new_confirmed_per', 'new_confirmed_avg_7', 'new_confirmed_per_avg_7']).sort_values(['confirmed'], ascending=False)
+
+	return html.Div([
+		dash_table.DataTable(
+			id='datatable-interactivity',
+			columns=[
+				{"name": ["", "Concelho"], "id": "municipality"},
+				{"name": ["", "Casos confirmados"], "id": "confirmed"},
+				{"name": ["Novos confirmados (último relatório)", "#"], "id": "new_confirmed"},
+				{"name": ["Novos confirmados (último relatório)", "%"], "id": "new_confirmed_per"},
+				{"name": ["Novos confirmados (média móvel a 7 dias)", "#"], "id": "new_confirmed_avg_7"},
+				{"name": ["Novos confirmados (média móvel a 7 dias)", "%"], "id": "new_confirmed_per_avg_7"},
+			],
+			data=df.to_dict('records'),
+			merge_duplicate_headers=True,
+			filter_action="native",
+			sort_action="native",
+			page_action="native",
+			page_size= 10,
+			style_as_list_view=True,
+			style_header={
+				'backgroundColor': 'white',
+				'fontWeight': 'bold',
+				'border': 'none'
+			},
+			style_cell={
+				'fontFamily': 'Open Sans',
+                'textAlign': 'center',
+                'height': '40px',
+				# 'padding': '2px 5px',
+				'maxWidth': '100px',
+				'whiteSpace': 'normal'
+			},
+			style_cell_conditional=[
+				{
+					'if': {'column_id': 'municipality'},
+					'width': '25%',
+				}
+			],
+			style_data_conditional=[
+				{
+					'if': {'column_id': 'municipality'},
+					'textAlign': 'left'
+				}
+			]
+		)
 	])
 
 
@@ -65,8 +116,15 @@ def get_contents():
 		dbc.Card(
 			dbc.CardBody(
 				[
-					html.H4("Lista dos 10 concelhos com mais casos confirmados"),
-					generate_table_confirmed()
+					html.H4("Lista dos concelhos com casos confirmados"),
+					html.I(className="fas fa-question-circle fa-lg", id="tooltip-target"),
+					dbc.Tooltip(
+						"Ao clicar nos botões de ordenação de cada coluna poderá ordenar a tabela por esse dado específico. "
+						"Pode também filtrar a informação pretendida. "
+						"Os filtros dos campos numéricos permitem pesquisas do género '>400' ou '<=100'.",
+						target="tooltip-target"
+					),
+					generate_new_table_confirmed(),
 				]
 			),
 			className="my-2"
