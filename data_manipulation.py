@@ -72,7 +72,7 @@ def read_and_clean_local_data(source):
 	)
 
 	# remove unnecessary columns
-	data = raw_data.drop(columns=['distrito_ra'])
+	data = raw_data.drop(columns=['distrito_ilha'])
 
 	# rename columns
 	data = data.rename(
