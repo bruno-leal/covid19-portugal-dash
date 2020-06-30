@@ -219,7 +219,7 @@ def boost_regional_data(regional_data, national_data):
 # 		dataframe.																#
 #################################################################################
 
-def boost_local_data(local_data):
+def boost_local_data(local_data, municipalities_metadata):
 	new_local_data = local_data.assign(new_confirmed = local_data.groupby(['municipality']).confirmed.diff())
 	new_local_data = new_local_data.assign(
 		new_confirmed_per = round(
@@ -231,6 +231,20 @@ def boost_local_data(local_data):
 	new_local_data = new_local_data.assign(new_confirmed_avg_7=round(new_local_data.new_confirmed.rolling(7).mean(), 2))
 	new_local_data = new_local_data.assign(new_confirmed_per_avg_7=round(new_local_data.new_confirmed_per.rolling(7).mean(), 2))
 
+
+	new_local_data = pd.merge(
+		left = new_local_data,
+		right = municipalities_metadata,
+		left_on = ['code', 'municipality'],
+		right_on = ['code_lau', 'name']
+	)
+
+	new_local_data = new_local_data.assign(
+		confirmed_per_thousand = round(new_local_data.confirmed / new_local_data.population * 1000, 2)
+	).drop(
+		columns=['code', 'code_lau', 'name', 'population']
+	)
+
 	return new_local_data
 
 
@@ -241,6 +255,7 @@ def boost_local_data(local_data):
 
 def load_data(source):
 	data = read_and_clean_data(source)
+	municipalities_metadata = read_municipalites_metadata(source)
 
 	national_data = data['national_data']
 	regional_data = data['regional_data']
@@ -248,10 +263,34 @@ def load_data(source):
 
 	national_data = boost_national_data(national_data)
 	regional_data = boost_regional_data(regional_data, national_data)
-	local_data = boost_local_data(local_data)
+	local_data = boost_local_data(local_data, municipalities_metadata)
 
 	return {
 		'national_data': national_data,
 		'regional_data': regional_data,
 		'local_data': local_data
 	}
+
+
+#################################################################################
+#   FUNCTION read_municipalites_metadata										#
+#   - Reads and cleans data from the file containing municipalities.			#
+# 		metadata.			                            						#
+#################################################################################
+
+def read_municipalites_metadata(source):
+	print('Reading values from municipalities metadata file...')
+
+	# read data
+	raw_data = pd.read_excel(
+		utils.get_municipalities_metadata_file_path(source),
+		dtype={'code_district_island': str, 'code_lau': str}  # keep leading zeros
+	)
+
+	# remove unnecessary columns
+	data = raw_data.drop(columns=['code_district_island', 'code_nuts3', 'population_male', 'population_female', 'population_density'])
+
+	print ('Done.')
+
+	# return cleaned data
+	return data

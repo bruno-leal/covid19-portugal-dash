@@ -22,27 +22,16 @@ def generate_chart_bar_new_confirmed_municipality(municipality):
 
 def generate_table_confirmed():
 	max_date = local_data.date.max().date()
-	df = local_data.query('date == @max_date').query('confirmed > 0').filter(['municipality', 'confirmed', 'new_confirmed', 'new_confirmed_per', 'new_confirmed_avg_7', 'new_confirmed_per_avg_7']).sort_values(['confirmed'], ascending=False)#.head(10)
-	df = df.rename(
-		columns={
-			'municipality': 'Concelho',
-			'confirmed': 'Casos confirmados',
-			'new_confirmed': 'Novos confirmados (#)',
-			'new_confirmed_per': 'Novos confirmados (%)',
-			'new_confirmed_avg_7': 'Novos confirmados, média móvel a 7 dias (#)',
-			'new_confirmed_per_avg_7': 'Novos confirmados, média móvel a 7 dias (%)'
-		}
+	df = local_data.query(
+		'date == @max_date'
+	).query(
+		'confirmed > 0'
+	).filter(
+		['municipality', 'confirmed', 'confirmed_per_thousand', 'new_confirmed', 'new_confirmed_per', 'new_confirmed_avg_7', 'new_confirmed_per_avg_7']
+	).sort_values(
+		['confirmed'],
+		ascending=False
 	)
-
-	table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True)
-
-	return html.Div([
-		table
-	])
-
-def generate_new_table_confirmed():
-	max_date = local_data.date.max().date()
-	df = local_data.query('date == @max_date').query('confirmed > 0').filter(['municipality', 'confirmed', 'new_confirmed', 'new_confirmed_per', 'new_confirmed_avg_7', 'new_confirmed_per_avg_7']).sort_values(['confirmed'], ascending=False)
 
 	return html.Div([
 		dash_table.DataTable(
@@ -50,6 +39,7 @@ def generate_new_table_confirmed():
 			columns=[
 				{"name": ["", "Concelho"], "id": "municipality"},
 				{"name": ["", "Casos confirmados"], "id": "confirmed"},
+				{"name": ["", "Casos confirmados p/ mil habitantes"], "id": "confirmed_per_thousand"},
 				{"name": ["Novos confirmados (último relatório)", "#"], "id": "new_confirmed"},
 				{"name": ["Novos confirmados (último relatório)", "%"], "id": "new_confirmed_per"},
 				{"name": ["Novos confirmados (média móvel a 7 dias)", "#"], "id": "new_confirmed_avg_7"},
@@ -124,7 +114,7 @@ def get_contents():
 						"Os filtros dos campos numéricos permitem pesquisas do género '>400' ou '<=100'.",
 						target="tooltip-target"
 					),
-					generate_new_table_confirmed(),
+					generate_table_confirmed(),
 				]
 			),
 			className="my-2"
