@@ -34,6 +34,7 @@ def generate_table_confirmed():
 	)
 
 	return html.Div([
+		html.Br(),
 		dash_table.DataTable(
 			id='datatable-interactivity',
 			columns=[
@@ -51,11 +52,13 @@ def generate_table_confirmed():
 			sort_action="native",
 			page_action="native",
 			page_size= 10,
-			style_as_list_view=True,
+			# style_as_list_view=True,
 			style_header={
-				'backgroundColor': 'white',
+				'backgroundColor': 'gray',
+				'color': 'white',
 				'fontWeight': 'bold',
-				'border': 'none'
+				# 'border': '1px solid darkgray'
+				# 'border': 'none'
 			},
 			style_cell={
 				'fontFamily': 'Open Sans',
