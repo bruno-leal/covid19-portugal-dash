@@ -18,5 +18,9 @@ def get_local_data():
 	return data['local_data']
 
 
-def get_last_update():
+def get_last_update_date():
 	return data['national_data'].date.max().date()
+
+def get_latest_national_data():
+	latest_date = get_last_update_date()
+	return data['national_data'].query('date == @latest_date')

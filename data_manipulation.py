@@ -138,6 +138,8 @@ def boost_national_data(data):
 	new_data = new_data.assign(new_tested=new_data.new_confirmed + new_data.new_unconfirmed)
 	new_data = new_data.assign(new_recovered=new_data.groupby(['region']).recovered.diff())
 	new_data = new_data.assign(new_dead=new_data.groupby(['region']).dead.diff())
+	new_data = new_data.assign(new_closed=new_data.groupby(['region']).closed.diff())
+	new_data = new_data.assign(new_active=new_data.groupby(['region']).active.diff())
 
 	new_data = new_data.assign(new_suspected_per=new_data.groupby(['region']).suspected.pct_change())
 	new_data = new_data.assign(new_confirmed_per=new_data.groupby(['region']).confirmed.pct_change())
