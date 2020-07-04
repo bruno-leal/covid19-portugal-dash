@@ -309,18 +309,8 @@ def load_municipalites_geojson(source):
 	print('Loading municipalities geojson file...')
 
 	# load layer
-	with urlopen('file:///E:/Estudos/COVID-19/covid-19-data/portugal/data/concelhos_new.geojson') as json_file:
+	with urlopen(utils.get_municipalities_geojson_file_path(source)) as json_file:
 		geojson_layer = json.load(json_file)
-
-	print("geojson_layer created")
-	# # read data
-	# raw_data = pd.read_excel(
-	# 	utils.get_municipalities_metadata_file_path(source),
-	# 	dtype={'code_district_island': str, 'code_lau': str}  # keep leading zeros
-	# )
-
-	# # remove unnecessary columns
-	# data = raw_data.drop(columns=['code_district_island', 'code_nuts3', 'population_male', 'population_female', 'population_density'])
 
 	print ('Done.')
 

@@ -7,3 +7,5 @@ dash-renderer==1.4.1
 dash-html-components==1.0.3
 dash-core-components==1.10.0
 dash-bootstrap-components==0.10.0
+json>=2.0.9
+urllib.request>=3.7

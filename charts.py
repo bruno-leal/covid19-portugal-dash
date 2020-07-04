@@ -376,6 +376,6 @@ class LocalCharts:
 		fig.update_layout(mapbox_style="carto-positron", mapbox_zoom=4.5, mapbox_center = {"lat": 38.3317, "lon": -17.2836})
 		fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 		# fig.update_layout(height=800)
-		print("figure ready")
+		# print("figure ready")
 
 		return fig
