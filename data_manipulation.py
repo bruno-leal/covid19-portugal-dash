@@ -1,5 +1,7 @@
-import pandas as pd
 import datetime
+import json
+import pandas as pd
+from urllib.request import urlopen
 
 import utils
 
@@ -244,10 +246,34 @@ def boost_local_data(local_data, municipalities_metadata):
 	new_local_data = new_local_data.assign(
 		confirmed_per_thousand = round(new_local_data.confirmed / new_local_data.population * 1000, 2)
 	).drop(
-		columns=['code', 'code_lau', 'name', 'population']
+		columns=['code_lau', 'name', 'population']
 	)
 
 	return new_local_data
+
+
+#################################################################################
+#   FUNCTION read_municipalites_metadata										#
+#   - Reads and cleans data from the file containing municipalities.			#
+# 		metadata.			                            						#
+#################################################################################
+
+def read_municipalites_metadata(source):
+	print('Reading values from municipalities metadata file...')
+
+	# read data
+	raw_data = pd.read_excel(
+		utils.get_municipalities_metadata_file_path(source),
+		dtype={'code_district_island': str, 'code_lau': str}  # keep leading zeros
+	)
+
+	# remove unnecessary columns
+	data = raw_data.drop(columns=['code_district_island', 'code_nuts3', 'population_male', 'population_female', 'population_density'])
+
+	print ('Done.')
+
+	# return cleaned data
+	return data
 
 
 #################################################################################
@@ -275,24 +301,28 @@ def load_data(source):
 
 
 #################################################################################
-#   FUNCTION read_municipalites_metadata										#
-#   - Reads and cleans data from the file containing municipalities.			#
-# 		metadata.			                            						#
+#   FUNCTION read_municipalites_geojson											#
+#   - Loads geographical data from the municipalities geojson file.				#
 #################################################################################
 
-def read_municipalites_metadata(source):
-	print('Reading values from municipalities metadata file...')
+def load_municipalites_geojson(source):
+	print('Loading municipalities geojson file...')
 
-	# read data
-	raw_data = pd.read_excel(
-		utils.get_municipalities_metadata_file_path(source),
-		dtype={'code_district_island': str, 'code_lau': str}  # keep leading zeros
-	)
+	# load layer
+	with urlopen('file:///E:/Estudos/COVID-19/covid-19-data/portugal/data/concelhos_new.geojson') as json_file:
+		geojson_layer = json.load(json_file)
 
-	# remove unnecessary columns
-	data = raw_data.drop(columns=['code_district_island', 'code_nuts3', 'population_male', 'population_female', 'population_density'])
+	print("geojson_layer created")
+	# # read data
+	# raw_data = pd.read_excel(
+	# 	utils.get_municipalities_metadata_file_path(source),
+	# 	dtype={'code_district_island': str, 'code_lau': str}  # keep leading zeros
+	# )
+
+	# # remove unnecessary columns
+	# data = raw_data.drop(columns=['code_district_island', 'code_nuts3', 'population_male', 'population_female', 'population_density'])
 
 	print ('Done.')
 
-	# return cleaned data
-	return data
+	# return layer
+	return geojson_layer

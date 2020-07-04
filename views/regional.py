@@ -7,6 +7,7 @@ import datetime
 import charts as ch
 import data_handler as dh
 
+
 national_data = dh.get_national_data()
 regional_data = dh.get_regional_data()
 
@@ -14,21 +15,21 @@ regional_data = dh.get_regional_data()
 def generate_chart_stack_confirmed_region():
 	return html.Div(children=[
 		dcc.Graph(
-			figure=ch.PlotlyCharts.confirmed_regional_proportion_evolution(national_data, regional_data)
+			figure=ch.RegionalCharts.confirmed_regional_proportion_evolution(national_data, regional_data)
 		)
 	])
 
 def generate_chart_stack_dead_region():
 	return html.Div(children=[
 		dcc.Graph(
-			figure=ch.PlotlyCharts.deaths_regional_proportion_evolution(national_data, regional_data)
+			figure=ch.RegionalCharts.deaths_regional_proportion_evolution(national_data, regional_data)
 		)
 	])
 
 def generate_chart_confirmed_dead_por_region():
 	return html.Div(children=[
 		dcc.Graph(
-			figure=ch.PlotlyCharts.confirmed_deaths_comparison_evolution(regional_data)
+			figure=ch.RegionalCharts.confirmed_deaths_comparison_evolution(regional_data)
 		)
 	])
 

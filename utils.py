@@ -7,13 +7,14 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 MAIN_FILE_LOCAL_PATH = os.path.join(ROOT_DIR, '..', 'covid19-portugal-data/time_series_covid19_portugal.xlsx')
 MUNICIPALITIES_FILE_LOCAL_PATH = os.path.join(ROOT_DIR, '..', 'covid19-portugal-data/time_series_covid19_portugal_confirmados_concelhos.xlsx')
-MUNICIPALITIES_METADATA_FILE_LOCAL_PATH = os.path.join(ROOT_DIR, '..', 'covid19-portugal-data/municipalities.xlsx')
-GEOJSON_FILE_LOCAL_PATH = os.path.join(ROOT_DIR, '..', 'covid19-portugal-data/concelhos.min.geojson') # source: https://dados.gov.pt/pt/datasets/concelhos-de-portugal/
+MUNICIPALITIES_METADATA_FILE_LOCAL_PATH = os.path.join(ROOT_DIR, '..', 'covid19-portugal-data/portugal_municipalities.xlsx')
+MUNICIPALITIES_GEOJSON_FILE_LOCAL_PATH = os.path.join(ROOT_DIR, '..', 'covid19-portugal-data/portugal_concelhos.geojson')
 
 # github paths
 MAIN_FILE_GITHUB_PATH = 'https://github.com/bruno-leal/covid19-portugal-data/blob/master/time_series_covid19_portugal.xlsx?raw=true'
 MUNICIPALITIES_FILE_GITHUB_PATH = 'https://github.com/bruno-leal/covid19-portugal-data/blob/master/time_series_covid19_portugal_confirmados_concelhos.xlsx?raw=true'
-MUNICIPALITIES_METADATA_FILE_GITHUB_PATH = 'https://github.com/bruno-leal/covid19-portugal-data/blob/master/municipalities.xlsx?raw=true'
+MUNICIPALITIES_METADATA_FILE_GITHUB_PATH = 'https://github.com/bruno-leal/covid19-portugal-data/blob/master/portugal_municipalities.xlsx?raw=true'
+MUNICIPALITIES_GEOJSON_FILE_GITHUB_PATH = 'https://github.com/bruno-leal/covid19-portugal-data/blob/master/portugal_municipalities.geojson'
 
 
 class Source(Enum):
@@ -28,3 +29,6 @@ def get_municipalities_file_path(source):
 
 def get_municipalities_metadata_file_path(source):
 	return MUNICIPALITIES_METADATA_FILE_LOCAL_PATH if source == Source.LOCAL else MUNICIPALITIES_METADATA_FILE_GITHUB_PATH
+
+def get_municipalities_geojson_file_path(source):
+	return MUNICIPALITIES_GEOJSON_FILE_LOCAL_PATH if source == Source.LOCAL else MUNICIPALITIES_GEOJSON_FILE_GITHUB_PATH

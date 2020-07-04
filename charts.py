@@ -1,13 +1,40 @@
-import pandas as pd
 import datetime
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-# import json
 
 import utils
 
 
-class PlotlyCharts:
+class Utils:
+
+	def get_label_by_variable(variable):
+		switcher={
+			"confirmed": "casos confirmados",
+			"confirmed_per_thousand": "casos confirmados por 1000 habitantes",
+			"new_confirmed": "novos casos confirmados (último relatório)",
+			"new_confirmed_avg_7": "novos casos confirmados (média móvel a 7 dias)",
+			"new_confirmed_per": "% de variação diária (face ao relatório anterior)",
+			"new_confirmed_per_avg_7": "% de variação diária (média móvel a 7 dias)"
+		}
+
+		return switcher.get(variable, "")
+
+
+	def get_number_format_by_variable(variable):
+		switcher={
+			"confirmed": "{:.0f}",
+			"confirmed_per_thousand": "{:.2f}",
+			"new_confirmed": "{:.0f}",
+			"new_confirmed_avg_7": "{:.1f}",
+			"new_confirmed_per": "{:.2f}",
+			"new_confirmed_per_avg_7": "{:.2f}"
+		}
+
+		return switcher.get(variable, "")
+
+
+class NationalCharts:
 
 	def new_confirmed_evolution(national_data):
 		df = national_data.filter(['date', 'new_confirmed', 'new_confirmed_avg_7'])
@@ -203,6 +230,8 @@ class PlotlyCharts:
 		)
 
 
+class RegionalCharts:
+
 	def confirmed_regional_proportion_evolution(national_data, regional_data):
 		df = regional_data.filter(['date', 'region', 'confirmed', 'confirmed_per'])
 		df = df.assign(date_fmt=df.date.dt.strftime("%B %d"))
@@ -283,7 +312,9 @@ class PlotlyCharts:
 		)
 
 
-	def new_confirmed_evolution_municipaliy(local_data, municipality):
+class LocalCharts:
+
+	def new_confirmed_evolution_municipality(local_data, municipality):
 		df = local_data.query('municipality == @municipality').filter(['date', 'new_confirmed', 'new_confirmed_avg_7'])
 
 		fig = go.Figure()
@@ -315,29 +346,36 @@ class PlotlyCharts:
 		return fig
 
 
-	# def confirmed_municipalities_map(local_data, last_n_days):
-	# 	local_data_most_recent_date = local_data.date.max().date()
-	# 	latest_local_data = local_data.query('date == @local_data_most_recent_date')
+	def municipalities_map(latest_local_data, municipalities_geojson_layer, variable):
+		label = Utils.get_label_by_variable(variable)
+		number_format = Utils.get_number_format_by_variable(variable)
 
-	# 	with open(utils.GEOJSON_FILE_PATH, encoding='utf-8') as json_file:
-	# 		geojson_layer = json.load(json_file)
+		fig = go.Figure(
+			go.Choroplethmapbox(
+				geojson=municipalities_geojson_layer,
+				featureidkey="properties.CCA_2",
+				locations=latest_local_data.code,
+				z=latest_local_data[variable],
+				colorscale="OrRd",
+				# zmin=0,
+				# zmax=12,
+				marker_line_width=0,
+				# text=latest_local_data.apply(lambda row: f"{row['municipality']}:<br>{row[variable]:.0f} " + label, axis=1),
+				text=latest_local_data.apply(
+					lambda row:
+					"{}:<br>{} {}".format(
+						row["municipality"],
+						number_format.format(row[variable]),
+						label
+					),
+					axis=1
+				),
+				hoverinfo="text"
+			)
+		)
+		fig.update_layout(mapbox_style="carto-positron", mapbox_zoom=4.5, mapbox_center = {"lat": 38.3317, "lon": -17.2836})
+		fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+		# fig.update_layout(height=800)
+		print("figure ready")
 
-	# 	# import plotly.express as px
-
-	# 	fig = px.choropleth(
-	# 		latest_local_data,
-	# 		geojson=geojson_layer,
-	# 		color="confirmed",
-	# 		locations="municipality",
-	# 		featureidkey="properties.NAME_2",
-	# 		# scope="europe",
-	# 		width=1024,
-	# 		height=768,
-	# 		# projection="stereographic"
-	# 	)
-	# 	fig.update_geos(fitbounds="locations")
-	# 	# fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-
-	# 	# fig.show()
-
-	# 	return fig
+		return fig

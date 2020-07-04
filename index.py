@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 
 from app import app, server
-from views import home, national, regional, local
+from views import home, national, regional, local, maps
 import data_handler as dh
 
 
@@ -19,14 +19,15 @@ app.layout = dbc.Container(
 				dbc.DropdownMenu(
 					children=[
 						# dbc.DropdownMenuItem("Evolução", header=True),
-						dbc.DropdownMenuItem("Dados nacionais", href="/national"),
-						dbc.DropdownMenuItem("Dados regionais", href="/regional"),
-						dbc.DropdownMenuItem("Dados concelhios", href="/local"),
+						dbc.DropdownMenuItem("Nacional", href="/national"),
+						dbc.DropdownMenuItem("Regiões", href="/regional"),
+						dbc.DropdownMenuItem("Concelhos", href="/local"),
 					],
 					nav=True,
 					in_navbar=True,
 					label="Evolução",
-				)
+				),
+				dbc.NavItem(dbc.NavLink("Mapas", href="/maps")),
 			],
 			dark=True,
 			color="primary",
@@ -81,6 +82,8 @@ def display_page(pathname):
 		return regional.get_contents()
 	elif (pathname == '/local'):
 		return local.get_contents()
+	elif (pathname == '/maps'):
+		return maps.get_contents()
 	else:
 		return '404'
 
