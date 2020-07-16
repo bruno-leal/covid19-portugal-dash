@@ -346,10 +346,11 @@ class LocalCharts:
 		return fig
 
 
-	def municipalities_map(latest_local_data, municipalities_geojson_layer, variable):
+	def municipalities_limits_map(latest_local_data, municipalities_geojson_layer, variable):
 		label = Utils.get_label_by_variable(variable)
 		number_format = Utils.get_number_format_by_variable(variable)
 
+		# print("creating figure at: " + datetime.datetime.now().strftime("%H:%M:%S"))
 		fig = go.Figure(
 			go.Choroplethmapbox(
 				geojson=municipalities_geojson_layer,
@@ -376,6 +377,47 @@ class LocalCharts:
 		fig.update_layout(mapbox_style="carto-positron", mapbox_zoom=4.5, mapbox_center = {"lat": 38.3317, "lon": -17.2836})
 		fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 		# fig.update_layout(height=800)
-		# print("figure ready")
+		# print("created figure at: " + datetime.datetime.now().strftime("%H:%M:%S"))
+
+		return fig
+
+
+	def municipalities_centroids_map(latest_local_data, municipalities_geojson_layer, variable):
+		df = municipalities_geojson_layer.merge(
+			latest_local_data, left_on = ['CCA_2'], right_on = ['code'], how = 'left',
+		).query("confirmed > 0")
+		
+		
+		label = Utils.get_label_by_variable(variable)
+		number_format = Utils.get_number_format_by_variable(variable)
+
+		# print("creating figure at: " + datetime.datetime.now().strftime("%H:%M:%S"))
+		fig = fig = px.scatter_mapbox(
+			df,
+			# mapbox_style='carto-positron',
+			lat="centroid_lat",
+			lon="centroid_lon",
+			color=variable,
+			size=variable,
+			hover_name="municipality",
+			# hover_data=[variable],
+			hover_data={
+				variable: True,
+				"centroid_lat": False,
+				"centroid_lon": False
+			},
+			labels={
+				variable: label
+			},
+			color_continuous_scale=px.colors.sequential.solar,
+			# size_min=5,
+			# size_max=20,
+			zoom=5,
+			# center=dict(lat=38.3317, lon=-17.2836)
+		)
+		fig.update_layout(hovermode='closest')
+		fig.update_layout(mapbox_style="carto-positron", mapbox_zoom=4.5, mapbox_center = {"lat": 38.3317, "lon": -17.2836})
+		fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0}, height=600)
+		# print("created figure at: " + datetime.datetime.now().strftime("%H:%M:%S"))
 
 		return fig

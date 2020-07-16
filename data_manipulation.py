@@ -1,4 +1,5 @@
 import datetime
+import geopandas
 import json
 import pandas as pd
 from urllib.request import urlopen
@@ -305,12 +306,19 @@ def load_data(source):
 #   - Loads geographical data from the municipalities geojson file.				#
 #################################################################################
 
-def load_municipalites_geojson(source):
+def load_municipalites_geojson(source, layer_type):
 	print('Loading municipalities geojson file...')
 
+	geojson_path = utils.get_municipalities_geojson_file_path(source, layer_type)
+
 	# load layer
-	with urlopen(utils.get_municipalities_geojson_file_path(source)) as json_file:
-		geojson_layer = json.load(json_file)
+	if layer_type == utils.GeoJSONType.LIMITS:
+		with urlopen(geojson_path) as json_file:
+			geojson_layer = json.load(json_file)
+	elif layer_type == utils.GeoJSONType.CENTROIDS:
+		geojson_layer = geopandas.read_file(geojson_path)
+		geojson_layer["centroid_lon"] = geojson_layer.centroid.x
+		geojson_layer["centroid_lat"] = geojson_layer.centroid.y
 
 	print ('Done.')
 

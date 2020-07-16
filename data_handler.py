@@ -4,7 +4,8 @@ import utils
 
 print("LOADING DATA...")
 data = dm.load_data(utils.Source.GITHUB)
-municipalities_geojson_layer = dm.load_municipalites_geojson(utils.Source.GITHUB)
+# municipalities_limits_geojson_layer = dm.load_municipalites_geojson(utils.Source.LOCAL, utils.GeoJSONType.LIMITS) # Loading time is about 30 times slower than the centroids map
+municipalities_centroids_geojson_layer = dm.load_municipalites_geojson(utils.Source.LOCAL, utils.GeoJSONType.CENTROIDS)
 print("DATA LOADED.")
 
 
@@ -33,5 +34,5 @@ def get_latest_local_data():
 	return data['local_data'].query('date == @latest_date')
 
 
-def get_municipalities_geojson_layer():
-	return municipalities_geojson_layer
+def get_municipalities_geojson_layer(layer_type):
+	return municipalities_limits_geojson_layer if layer_type == utils.GeoJSONType.LIMITS else municipalities_centroids_geojson_layer

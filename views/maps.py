@@ -8,16 +8,21 @@ import dash_table
 from app import app
 import charts as ch
 import data_handler as dh
+import utils
 
 
 latest_local_data = dh.get_latest_local_data()
-municipalities_geojson_layer = dh.get_municipalities_geojson_layer()
+# municipalities_limits_geojson_layer = dh.get_municipalities_geojson_layer(utils.GeoJSONType.LIMITS) # Loading time is about 30 times slower than the centroids map
+municipalities_centroids_geojson_layer = dh.get_municipalities_geojson_layer(utils.GeoJSONType.CENTROIDS)
 
 
 def generate_map(variable):
 	return html.Div(children=[
+			# dcc.Graph( # Loading time is about 30 times slower than the centroids map
+			# 	figure=ch.LocalCharts.municipalities_limits_map(latest_local_data, municipalities_limits_geojson_layer, variable)
+			# ),
 			dcc.Graph(
-				figure=ch.LocalCharts.municipalities_map(latest_local_data, municipalities_geojson_layer, variable)
+				figure=ch.LocalCharts.municipalities_centroids_map(latest_local_data, municipalities_centroids_geojson_layer, variable)
 			)
 		])
 
@@ -34,7 +39,7 @@ def get_contents():
 						id="select-map-type",
 						options=[
                             {'label': 'Total de casos confirmados', 'value': 'confirmed'},
-                            {'label': 'N.º de casos confirmados por 100 habitantes', 'value': 'confirmed_per_thousand'},
+                            {'label': 'N.º de casos confirmados por 1000 habitantes', 'value': 'confirmed_per_thousand'},
                             {'label': 'Novos casos confirmados (último relatório)', 'value': 'new_confirmed'},
                             {'label': 'Novos casos confirmados (média móvel a 7 dias)', 'value': 'new_confirmed_avg_7'},
                             {'label': 'Variação percentual de novos casos confirmados (último relatório)', 'value': 'new_confirmed_per'},
