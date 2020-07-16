@@ -5,7 +5,7 @@ import utils
 print("LOADING DATA...")
 data = dm.load_data(utils.Source.GITHUB)
 # municipalities_limits_geojson_layer = dm.load_municipalites_geojson(utils.Source.LOCAL, utils.GeoJSONType.LIMITS) # Loading time is about 30 times slower than the centroids map
-municipalities_centroids_geojson_layer = dm.load_municipalites_geojson(utils.Source.LOCAL, utils.GeoJSONType.CENTROIDS)
+municipalities_centroids_geojson_layer = dm.load_municipalites_geojson(utils.Source.GITHUB, utils.GeoJSONType.CENTROIDS)
 print("DATA LOADED.")
 
 
