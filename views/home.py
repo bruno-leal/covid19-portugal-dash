@@ -10,6 +10,7 @@ import data_handler as dh
 
 latest_national_data = dh.get_latest_national_data()
 latest_local_data = dh.get_latest_local_data()
+last_update_date = dh.get_last_update_date()
 
 
 def generate_confirmed_panel():
@@ -144,6 +145,7 @@ def get_contents():
 		dbc.Jumbotron(
 			[
 				html.H1("Situação em Portugal", className="display-3"),
+				html.H4("(em {})".format(last_update_date)),
 				html.Br(className="my-2"),
 				dbc.Row(
 					[
