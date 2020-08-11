@@ -64,6 +64,15 @@ app.layout = dbc.Container(
 							width={"size": 3, "order": "last", "offset": 3},
 						)
 					]
+				),
+				html.P(
+					[
+						"Icon made by ",
+						html.A(children=["Freepik"], href="https://www.flaticon.com/authors/freepik", title="Freepik", target="_blank"),
+						" from ",
+						html.A(children=["www.flaticon.com"], href="https://www.flaticon.com/", title="Flaticon", target="_blank"),
+						"."
+					]
 				)
 			]
 		)
