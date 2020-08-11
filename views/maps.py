@@ -40,9 +40,9 @@ def get_contents():
 						options=[
                             {'label': 'Total de casos confirmados', 'value': 'confirmed'},
                             {'label': 'N.º de casos confirmados por 1000 habitantes', 'value': 'confirmed_per_thousand'},
-                            {'label': 'Novos casos confirmados (último relatório)', 'value': 'new_confirmed'},
+                            # {'label': 'Novos casos confirmados (último relatório)', 'value': 'new_confirmed'},
                             {'label': 'Novos casos confirmados (média móvel a 7 dias)', 'value': 'new_confirmed_avg_7'},
-                            {'label': 'Variação percentual de novos casos confirmados (último relatório)', 'value': 'new_confirmed_per'},
+                            # {'label': 'Variação percentual de novos casos confirmados (último relatório)', 'value': 'new_confirmed_per'},
                             {'label': 'Variação percentual de novos casos confirmados (média móvel a 7 dias)', 'value': 'new_confirmed_per_avg_7'}
 						],
                         className="my-2"

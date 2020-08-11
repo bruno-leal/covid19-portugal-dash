@@ -385,8 +385,8 @@ class LocalCharts:
 	def municipalities_centroids_map(latest_local_data, municipalities_geojson_layer, variable):
 		df = municipalities_geojson_layer.merge(
 			latest_local_data, left_on = ['CCA_2'], right_on = ['code'], how = 'left',
-		).query("confirmed > 0")
-		
+		)
+		df = df.loc[df[variable] > 0]
 		
 		label = Utils.get_label_by_variable(variable)
 		number_format = Utils.get_number_format_by_variable(variable)
